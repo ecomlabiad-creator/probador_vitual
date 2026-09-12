@@ -36,7 +36,9 @@ app.post('/generate', function (req, res) {
   })
   .then(function (submitRes) {
     if (!submitRes.ok) {
-      throw new Error('Fal.ai rechazo la solicitud');
+      return submitRes.text().then(function (t) {
+        throw new Error('Fal.ai rechazo (' + submitRes.status + '): ' + t);
+      });
     }
     return submitRes.json();
   })
