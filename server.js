@@ -70,9 +70,9 @@ app.post('/generate', function (req, res) {
               checkStatus(attempts - 1);
             }
           });
-      }, 2000);
+      }, 3000);
     }
-    checkStatus(20);
+    checkStatus(50);
   })
   .catch(function (err) {
     console.error(err);
