@@ -31,7 +31,9 @@ app.post('/submit', function (req, res) {
     body: JSON.stringify({
       human_image_url: face_image,
       garment_image_url: garment_image_url,
-      garment_description: 'clothing item'
+      description: 'a person wearing the garment',
+      garment_description: 'clothing item',
+      category: 'upper_body'
     })
   })
   .then(function (submitRes) {
@@ -65,10 +67,16 @@ app.get('/check', function (req, res) {
         fetch(responseUrl, { headers: { 'Authorization': 'Key ' + FAL_KEY } })
           .then(function (r) { return r.json(); })
           .then(function (result) {
-            if (result && result.image && result.image.url) {
-              res.json({ status: 'COMPLETED', result_url: result.image.url });
+            var url = null;
+            if (result.image && result.image.url) url = result.image.url;
+            else if (result.images && result.images[0] && result.images[0].url) url = result.images[0].url;
+            else if (result.output && result.output.url) url = result.output.url;
+            else if (typeof result.output === 'string') url = result.output;
+
+            if (url) {
+              res.json({ status: 'COMPLETED', result_url: url });
             } else {
-              res.json({ status: 'COMPLETED', error: 'Sin resultado' });
+              res.json({ status: 'COMPLETED', error: 'Sin resultado', raw: result });
             }
           });
       } else if (statusData.status === 'FAILED') {
